@@ -35,14 +35,22 @@ app.post('/register', (req, res) => {
   )
 })
 
-app.get("/users", (req, res) => {
+app.post("/users", (req, res) => {
+  const username = req.body.username
+  const password = req.body.password
+
   db.query(
-    "SELECT * FROM users", (err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        res.send(result)
-      }
+    "SELECT * FROM users WHERE username = ? AND password = ?",
+    [username, password],
+    (err, result) => {
+    if (err) {
+      res.send({err: err})
+    } 
+    if (result.length > 0) {
+      res.send(result)
+    } else {
+      res.send({message: "Login Error: Wrong username/password combination"})
+    }
     })
 })
 
